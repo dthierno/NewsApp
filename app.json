@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "intro",
-    "slug": "intro",
+    "name": "Todo",
+    "slug": "todo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
