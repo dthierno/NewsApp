@@ -1,50 +1,213 @@
-# Welcome to your Expo app 👋
+# Application de Traduction Yoda
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Cette application permet de traduire du texte en utilisant l'API de traduction Yoda. Vous pouvez ajouter du texte à traduire, afficher les traductions précédentes et supprimer des traductions.
 
-## Get started
+## Installation
 
-1. Install dependencies
+1. Clonez le dépôt :
+    ```sh
+    git clone https://github.com/dthierno/YodaExpoApp.git
+    cd YodaExpoApp
+    ```
+2. Installez les dépendances :
+    ```sh
+    npm install
+    ```
 
-   ```bash
-   npm install
-   ```
+## Utilisation
 
-2. Start the app
-
-   ```bash
+1. Lancez l'application :
+    ```sh
     npx expo start
-   ```
+    ```
+2. Ouvrez l'application sur votre émulateur ou appareil physique.
 
-In the output, you'll find options to open the app in a
+## Composants
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### `AddTranslation`
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Ce composant permet d'ajouter du texte à traduire. Il comprend un champ de saisie et un bouton de soumission.
 
-## Get a fresh project
+```tsx
+import { Text, TextInput } from 'react-native';
+import styles from './styles';
+import React from 'react';
 
-When you're ready, run:
+type AddTranslationType = {
+  translation: string,
+  title?: string,
+  description?: string,
+  handleSubmit: () => void,
+  setTranslation: (value: React.SetStateAction<string>) => void
+}
 
-```bash
-npm run reset-project
+const AddTranslation = ({ 
+  translation: todo,
+  title = "Your Todo Application",
+  description = "Add the  you want to accomplish today", 
+  handleSubmit, 
+  setTranslation: setTodo 
+} : AddTranslationType) => {
+  return (
+    <>
+      <Text style={styles.title}>
+        {title}
+      </Text>
+
+      <Text style={styles.description}>
+        {description}
+      </Text>
+      
+      <TextInput
+        returnKeyType='done'
+        style={styles.input}
+        value={todo}
+        onChangeText={value => setTodo(value)}
+        onSubmitEditing={handleSubmit}
+      />
+    </>
+  )
+}
+
+export default AddTranslation
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### `DisplayTranslation`
 
-## Learn more
+Ce composant permet d'afficher les traductions précédentes. Il comprend une liste des traductions et un état vide si aucune traduction n'est disponible.
 
-To learn more about developing your project with Expo, look at the following resources:
+```tsx
+import React from 'react';
+import { FlatList } from 'react-native';
+import { Translation } from "@/app/index";
+import styles from './styles';
+import TranslationCard from '../TranslationCard/TranslationCard';
+import EmptyState from '../EmptyState/EmptyState';
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+type DisplayTranslationProps = {
+    translationList: Translation[],
+    handleDelete: (todoId: number) => void,
+};
 
-## Join the community
+const DisplayTranslation = ({
+    translationList: todoList,
+    handleDelete
+}: DisplayTranslationProps) => {
+  return (
+        <>
+            { todoList.length > 0 ?
+                <FlatList 
+                    style={styles.list}
+                    data={todoList}
+                    showsVerticalScrollIndicator={false} 
+                    keyExtractor={(item) => `${item._id}`}
+                    renderItem={({ item }) => (
+                        <TranslationCard handleDelete={handleDelete} data={item} />
+                    )}
+                />
+            :
+                <EmptyState>
+                    You have no previous translations
+                </EmptyState>
+            }
+        </>
+    );
+};
 
-Join our community of developers creating universal apps.
+export default DisplayTranslation;
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Fonctions Principales
+
+### `handleSubmit`
+Cette fonction envoie le texte à traduire à l'API de traduction Yoda et ajoute la traduction à la liste des traductions.
+
+```tsx
+async function handleSubmit() {
+    try {
+      const response = await axios.post("https://api.funtranslations.com/translate/yoda", {
+          text: translation,
+      });
+
+      const data = response.data.contents.translated;
+
+      if (data.trim().length > 0) {
+        const newTranslation: Translation = createNewTranslation(
+          translationList,
+          translation,
+          data
+        );
+        addNewTranslation(translationList, newTranslation);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 429) {
+        alert("Yoda translation API rate limit exceeded. Please try again later.");
+      } else {
+        alert("An error occurred. Please try again.");
+      }
+   }
+}
+```
+
+### `handleDelete`
+
+Cette fonction supprime une traduction de la liste des traductions.
+
+```tsx
+function handleDelete(todoId: number): void {
+    const updatedTranslationList = translationList.filter(
+      (todo) => todo._id != todoId
+    );
+    setTranslationList(updatedTranslationList);
+}
+```
+
+### `createNewTranslation`
+Cette fonction crée une nouvelle traduction avec un identifiant unique.
+
+```tsx
+function createNewTranslation(
+    prevTranslationList: Translation[],
+    newTranslationText: string,
+    translation: string,
+  ): Translation {
+    return {
+      _id:
+        prevTranslationList.length > 0
+          ? [...prevTranslationList].slice(-1)[0]._id + 1
+          : 0,
+      text: newTranslationText.trim(),
+      translation: translation,
+   };
+}
+```
+
+### `addNewTranslation`
+Cette fonction ajoute une nouvelle traduction à la liste des traductions.
+
+```tsx
+function addNewTranslation(
+    prevTranslationList: Translation[],
+    newTranslation: Translation
+  ): void {
+    setTranslationList([...prevTranslationList, newTranslation]);
+    setTranslation("");
+}
+```
+
+## Configuration
+
+Assurez-vous de configurer correctement l'API de traduction Yoda dans votre projet. Vous pouvez modifier l'URL de l'API dans la fonction `handleSubmit`.
+
+## Auteurs
+
+- **Thierno Diallo**
+- **Andy Nguema Luemba**
+- **Flora Kang**
+- **Kevin Guo**
+- **Brice Bakoup Wafo**
+
+## Licence
+Ce projet est sous licence MIT - voir le fichier LICENSE pour plus de détails.
+
+---
