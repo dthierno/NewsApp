@@ -1,15 +1,19 @@
 import React from 'react';
 import { FlatList } from 'react-native';
-
+import { Translation } from "@/app/index";
 import styles from './styles';
-import TodoCard from '../TodoCard/TodoCard';
-import { type DisplayTodoProps } from './types';
+import TranslationCard from '../TranslationCard/TranslationCard';
 import EmptyState from '../EmptyState/EmptyState';
 
-const DisplayTodo = ({
-    todoList,
+type DisplayTranslationProps = {
+    translationList: Translation[],
+    handleDelete: (todoId: number) => void,
+};
+
+const DisplayTranslation = ({
+    translationList: todoList,
     handleDelete
-}: DisplayTodoProps) => {
+}: DisplayTranslationProps) => {
   return (
         <>
             { todoList.length > 0 ?
@@ -19,16 +23,16 @@ const DisplayTodo = ({
                     showsVerticalScrollIndicator={false} 
                     keyExtractor={(item) => `${item._id}`}
                     renderItem={({ item }) => (
-                        <TodoCard handleDelete={handleDelete} data={item} />
+                        <TranslationCard handleDelete={handleDelete} data={item} />
                     )}
                 />
             :
                 <EmptyState>
-                    You have no tasks for the day
+                    You have no previous translations
                 </EmptyState>
             }
         </>
     );
 };
 
-export default DisplayTodo;
+export default DisplayTranslation;

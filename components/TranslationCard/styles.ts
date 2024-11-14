@@ -4,7 +4,7 @@ import { COLORS } from "@/constants/constants";
 const styles = StyleSheet.create({
     card: {
       width: 340,
-      backgroundColor: COLORS.card_todo,
+      backgroundColor: COLORS.card_translate,
       marginTop: 20,
       paddingHorizontal: 20,
       paddingVertical: 10,
