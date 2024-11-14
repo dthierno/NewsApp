@@ -7,19 +7,19 @@ import EmptyState from '../EmptyState/EmptyState';
 
 type DisplayTranslationProps = {
     translationList: Translation[],
-    handleDelete: (todoId: number) => void,
+    handleDelete: (todoId: translationId) => void,
 };
 
 const DisplayTranslation = ({
-    translationList: todoList,
+    translationList: translationList,
     handleDelete
 }: DisplayTranslationProps) => {
   return (
         <>
-            { todoList.length > 0 ?
+            { translationList.length > 0 ?
                 <FlatList 
                     style={styles.list}
-                    data={todoList}
+                    data={translationList}
                     showsVerticalScrollIndicator={false} 
                     keyExtractor={(item) => `${item._id}`}
                     renderItem={({ item }) => (
