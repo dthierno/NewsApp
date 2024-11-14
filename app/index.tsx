@@ -40,9 +40,9 @@ const Index = () => {
     setTranslation("");
   }
 
-  function handleDelete(todoId: number): void {
+  function handleDelete(translationId: number): void {
     const updatedTranslationList = translationList.filter(
-      (todo) => todo._id != todoId
+      (translation) => translation._id != translationId
     );
     setTranslationList(updatedTranslationList);
   }
