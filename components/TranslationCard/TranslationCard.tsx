@@ -6,10 +6,10 @@ import { Translation } from "@/app";
 
 export type TranslationCardProps = {
   data: Translation;
-  handleDelete: (todoId: number) => void;
+  handleDelete: (TranslationId: number) => void;
 };
 
-const TodoCard = ({ data, handleDelete }: TranslationCardProps) => {
+const TranslationCard = ({ data, handleDelete }: TranslationCardProps) => {
   return (
     <View style={styles.card}>
       <TouchableOpacity
@@ -29,4 +29,4 @@ const TodoCard = ({ data, handleDelete }: TranslationCardProps) => {
   );
 };
 
-export default TodoCard;
+export default TranslationCard;
