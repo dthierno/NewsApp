@@ -11,11 +11,11 @@ type AddTranslationType = {
 }
 
 const AddTranslation = ({ 
-  translation: todo,
+  translation: translation,
   title = "Your Yoda Application",
   description = "Add the text you wish to translate", 
   handleSubmit, 
-  setTranslation: setTodo 
+  setTranslation: setTranslation 
 } : AddTranslationType) => {
   return (
     <>
@@ -30,8 +30,8 @@ const AddTranslation = ({
       <TextInput
         returnKeyType='done'
         style={styles.input}
-        value={todo} 
-        onChangeText={value => setTodo(value)}  
+        value={translation} 
+        onChangeText={value => setTranslation(value)}  
         onSubmitEditing={handleSubmit} 
       />
     </>
