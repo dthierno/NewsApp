@@ -2,8 +2,11 @@ import React from 'react';
 import { View, Text } from 'react-native';
 
 import styles from './styles';
-import { type EmptyStateProps } from './types';
 
+
+type EmptyStateProps = {
+  children: string
+};
 
 const EmptyState = ({ children }: EmptyStateProps) => {
   return (

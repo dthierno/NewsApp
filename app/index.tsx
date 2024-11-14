@@ -2,59 +2,62 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 
 import styles from './styles';
-import { type TodoList } from './types';
 import { APP_NAME } from '@/constants/constants';
-import AddTodo from '@/components/AddTodo/AddTodo';
-import DisplayTodo from '@/components/DisplayTodo/DisplayTodo';
+import AddTranslation from '@/components/AddTranslation/AddTranslation';
+import DisplayTranslation from '@/components/DisplayTranslation/DisplayTranslation';
 
+export type Translation = {
+  readonly _id: number,
+  text: string,
+}
 
 const Index = () => {
-  const [todo, setTodo] = useState<string>("");
-  const [todoList, setTodoList] = useState<TodoList[]>([]);  
+  const [translation, setTranslation] = useState<string>("");
+  const [translationList, setTranslationList] = useState<Translation[]>([]);  
 
-  function createNewTodo(
-    prevTodoList: TodoList[], 
-    newTodoTitle: string
-  ) : TodoList {
+  function createNewTranslation(
+    prevTranslationList: Translation[], 
+    newTranslationText: string
+  ) : Translation {
     return {
-      _id: prevTodoList.length > 0? [...prevTodoList].slice(-1)[0]._id + 1 : 0,
-      title: newTodoTitle.trim()
+      _id: prevTranslationList.length > 0? [...prevTranslationList].slice(-1)[0]._id + 1 : 0,
+      text: newTranslationText.trim()
     };
   }
 
-  function addNewTodo(
-    prevTodoList: TodoList[], 
-    newTodo:TodoList
+  function addNewTranslation(
+    prevTranslationList: Translation[], 
+    newTranslation:Translation
   ) : void {
-    setTodoList([...prevTodoList, newTodo]);
-    setTodo("");  // Reset the input
+    setTranslationList([...prevTranslationList, newTranslation]);
+    setTranslation("");  
   }
 
   function handleDelete(todoId: number) : void {
-    const updatedTodoList = todoList.filter((todo) => todo._id != todoId);
-    setTodoList(updatedTodoList);
+    const updatedTranslationList = translationList.filter((todo) => todo._id != todoId);
+    setTranslationList(updatedTranslationList);
   }
 
   function handleSubmit() {
-    if (todo.trim().length > 0) {
-      const newTodo: TodoList = createNewTodo(todoList, todo);
-      addNewTodo(todoList, newTodo);
+    if (translation.trim().length > 0) {
+      const newTranslation: Translation = createNewTranslation(translationList, translation);
+      addNewTranslation(translationList, newTranslation);
     }
   }
 
   return (
       <View style={styles.background}>
 
-        <AddTodo 
-          todo={todo}
+        <AddTranslation 
+          translation={translation}
           title={APP_NAME} 
-          description={'Add the tasks you want to accomplish today'} 
+          description={'Add the text you wish to translate'} 
           handleSubmit={handleSubmit} 
-          setTodo={setTodo}          
+          setTranslation={setTranslation}          
         />
 
-        <DisplayTodo 
-          todoList={todoList}
+        <DisplayTranslation 
+          translationList={translationList}
           handleDelete={handleDelete}
         /> 
         

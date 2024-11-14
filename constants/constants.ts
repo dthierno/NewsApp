@@ -1,6 +1,6 @@
 
 export const COLORS = {
-    card_todo: "#fff7d6",
+    card_translate: "#fff7d6",
     text_description: "#555",
     
     gray: "#f9fafb",
@@ -8,4 +8,4 @@ export const COLORS = {
     white: "fff"
 }
 
-export const APP_NAME = "Your Todo Application"
+export const APP_NAME = "Your Yoda Application"

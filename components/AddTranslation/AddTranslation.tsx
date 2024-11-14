@@ -1,16 +1,22 @@
-import React from 'react'
-import { Text, TextInput } from 'react-native'
-
-import { type AddTodoType } from './type';
+import { Text, TextInput } from 'react-native';
 import styles from './styles';
+import React from 'react';
 
-const AddTodo = ({ 
-  todo,
+type AddTranslationType = {
+  translation: string,
+  title?: string,
+  description?: string,
+  handleSubmit: () => void,
+  setTranslation: (value: React.SetStateAction<string>) => void
+}
+
+const AddTranslation = ({ 
+  translation: todo,
   title = "Your Todo Application",
-  description = "Add the tasks you want to accomplish today", 
+  description = "Add the  you want to accomplish today", 
   handleSubmit, 
-  setTodo 
-} : AddTodoType) => {
+  setTranslation: setTodo 
+} : AddTranslationType) => {
   return (
     <>
       <Text style={styles.title}>
@@ -32,4 +38,4 @@ const AddTodo = ({
   )
 }
 
-export default AddTodo
+export default AddTranslation
