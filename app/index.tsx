@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View } from "react-native";
+import axios from "axios";
 
 import styles from "./styles";
 import { APP_NAME } from "@/constants/constants";
@@ -9,6 +10,7 @@ import DisplayTranslation from "@/components/DisplayTranslation/DisplayTranslati
 export type Translation = {
   readonly _id: number;
   text: string;
+  translation: string;
 };
 
 const Index = () => {
@@ -17,7 +19,8 @@ const Index = () => {
 
   function createNewTranslation(
     prevTranslationList: Translation[],
-    newTranslationText: string
+    newTranslationText: string,
+    translation: string,
   ): Translation {
     return {
       _id:
@@ -25,6 +28,7 @@ const Index = () => {
           ? [...prevTranslationList].slice(-1)[0]._id + 1
           : 0,
       text: newTranslationText.trim(),
+      translation: translation,
     };
   }
 
@@ -43,13 +47,28 @@ const Index = () => {
     setTranslationList(updatedTranslationList);
   }
 
-  function handleSubmit() {
-    if (translation.trim().length > 0) {
-      const newTranslation: Translation = createNewTranslation(
-        translationList,
-        translation
-      );
-      addNewTranslation(translationList, newTranslation);
+  async function handleSubmit() {
+    try {
+      const response = await axios.post("https://api.funtranslations.com/translate/yoda", {
+          text: translation,
+      });
+
+      const data = response.data.contents.translated;
+
+      if (data.trim().length > 0) {
+        const newTranslation: Translation = createNewTranslation(
+          translationList,
+          translation,
+          data
+        );
+        addNewTranslation(translationList, newTranslation);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 429) {
+        alert("Yoda translation API rate limit exceeded. Please try again later.");
+      } else {
+        alert("An error occurred. Please try again.");
+      }
     }
   }
 
@@ -70,31 +89,5 @@ const Index = () => {
     </View>
   );
 };
-
-async function translateToYoda(text: string): Promise<string> {
-  const apiUrl = "https://api.funtranslations.com/translate/yoda.json";
-  const params = new URLSearchParams({ text });
-
-  try {
-    const response = await fetch(`${apiUrl}?${params.toString()}`, {
-      method: "GET",
-    });
-
-    if (!response.ok) {
-      throw new Error(`Erreur API : ${response.statusText}`);
-    }
-
-    const data = await response.json();
-
-    if (data.success && data.contents && data.contents.translated) {
-      return data.contents.translated;
-    } else {
-      throw new Error("Erreur de traduction");
-    }
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
 
 export default Index;
